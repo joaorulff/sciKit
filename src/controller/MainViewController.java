@@ -45,9 +45,12 @@ public class MainViewController{
 	
 	private TableView<ZScores> tableview;
 	
+
 	
 	
-	public void openFile(ActionEvent event) throws FileNotFoundException{
+	public void openFileSingle(ActionEvent event) throws FileNotFoundException{
+		
+		
 		
 		File input = new File(filePathID.getText());
 		ArrayList<Double> list = Util.readValuesFromFile(input);
@@ -60,6 +63,9 @@ public class MainViewController{
 		
 	}
 	
+	
+	
+	
 	public void openFileDouble(ActionEvent event) throws FileNotFoundException {
 		
 		File input = new File(filePathDoubleID.getText());
@@ -71,8 +77,11 @@ public class MainViewController{
 			simpleList.add(row.getX().doubleValue());
 		}
 		
-		fillMean(Util.calculateMean(simpleList));
-		fillStandardDeviation(Util.calculateStandardDeviation(simpleList));
+		this.fillMean(Util.calculateMean(simpleList));
+		this.fillStandardDeviation(Util.calculateStandardDeviation(simpleList));
+		this.fillVariance(Util.calculateVariance(simpleList));
+		this.fillCorrelation(Util.calculateCorrelation(list));
+		this.fillTableDouble(list);
 		
 		
 	}
@@ -91,9 +100,13 @@ public class MainViewController{
 	
 	public void fillStandardDeviation(double standardDeviation){
 		
-		this.stdDeviationLabelID.setText(Double.toString(standardDeviation).substring(0, 4));
+		this.stdDeviationLabelID.setText(Double.toString(standardDeviation));
 		
 		
+	}
+	
+	public void fillCorrelation(double correlation){
+		this.correlationLabelID.setText(Double.toString(correlation));
 	}
 	
 	public void fillTable(ArrayList<Double> list){
@@ -129,11 +142,15 @@ public class MainViewController{
 		
 	}
 	
-	public void fillTableDouble(ArrayList<Double> list){
+	public void fillTableDouble(ArrayList<ZScores> list){
 		
 		TableColumn	<ZScores, Float> xColumn = new TableColumn<>("zScore");
 		xColumn.setMinWidth(100);
 		xColumn.setCellValueFactory(new PropertyValueFactory<>("x"));
+		
+		TableColumn	<ZScores, Float> yColumn = new TableColumn<>("y");
+		yColumn.setMinWidth(100);
+		yColumn.setCellValueFactory(new PropertyValueFactory<>("y"));
 		
 		
 		TableColumn<ZScores, Float> integralColumn = new TableColumn<>("integralValue");
@@ -145,14 +162,15 @@ public class MainViewController{
 		
 		
 		this.tableview.getColumns().add(xColumn);
+		this.tableview.getColumns().add(yColumn);
 		this.tableview.getColumns().add(integralColumn);
 		
 		ObservableList<ZScores> listValues = FXCollections.observableArrayList();
 		
-		for (Double x : list) {
+		for (ZScores x : list) {
 			
-			ZScores temp = new ZScores(x.floatValue());
-			listValues.add(temp);
+			
+			listValues.add(x);
 			
 		}
 		

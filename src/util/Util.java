@@ -88,5 +88,23 @@ public class Util {
 		return acumulator/(list.size()-1);
 	}
 	
+	public static double calculateCorrelation(ArrayList<ZScores> list){
+		
+		double sumOfx = 0, sumOfy = 0, sumOfxTimesY = 0, sumOfxSquared = 0, sumOfySquared = 0;
+		
+		for (ZScores x : list) {
+			sumOfxTimesY += x.getX()*x.getY();
+			sumOfx += x.getX();
+			sumOfy += x.getY();
+			sumOfxSquared += Math.pow(x.getX(), 2);
+			sumOfySquared += Math.pow(x.getY(), 2);
+		}
+		
+		
+		double numerator = list.size()*sumOfxTimesY - sumOfx*sumOfy;
+		double denominator = Math.sqrt(  (list.size()*sumOfxSquared - Math.pow(sumOfx, 2)) * (list.size()*sumOfySquared - Math.pow(sumOfy, 2))  );
+		
+		return numerator/denominator;
+	}
 
 }
