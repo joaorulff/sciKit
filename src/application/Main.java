@@ -1,5 +1,23 @@
 package application;
-	
+
+
+/*
++----------------------------------------------------------------------------+
+| Monmouth University Spring 2016 SE 403-01 |
++----------------------------------------------------------------------------+
+| Program Name: Assignment 5 												|
+| Author: Phil DiMarco														|
+| Version: 1.0 																|
+| Date: 04/07/2016															|
+| Synopsis: 																|
+| This program will calculate the mean, standard deviation, correlation and
+  variance of a set of values provide to the program by a file.				|
+| References: Assingments 1-4												|
++----------------------------------------------------------------------------+
+*/
+
+
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
