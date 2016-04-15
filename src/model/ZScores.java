@@ -31,7 +31,8 @@ public class ZScores {
 		
 		this.x = zScore;
 		this.setY(y);
-		this.calculateIntegral();
+		//this.calculateIntegral();
+		this.integrationWithT();
 		
 	}
 	
@@ -39,10 +40,30 @@ public class ZScores {
 		
 		this.x = zScore;
 		this.setY(0.0f);
-		this.calculateIntegral();
+		//this.calculateIntegral();
+		this.integrationWithT();
 		
 	}
 	
+	public static float gammaFunction(float x){
+		
+		System.out.println(x);
+		if(x == 1) return 1;
+		else if(x == 0.5) return (float)Math.sqrt(Math.PI);
+		return (x-1)*gammaFunction(x-1);
+		
+		
+	}
+	
+	public static float tDist(float x, int dof){
+		
+		float numerator = gammaFunction((dof + 1)/2);
+		float denominator = (float)(Math.pow(dof*Math.PI, 0.5) * gammaFunction(dof/2));
+		
+		float term = (float)(Math.pow(Math.pow(x, 2)/dof + 1, -(dof+1)/2));
+		
+		return (numerator/denominator) * term;
+	}
 	
 	
 	
@@ -55,7 +76,7 @@ public class ZScores {
 		
 		for (int k = 1; k <= n; k++) {
 			
-			area += f((2*k-1)*deltaX/2) * deltaX;
+			area += f( (2*k-1)*deltaX/2) * deltaX;
 			
 		}
 		
@@ -99,6 +120,20 @@ public class ZScores {
 
 	public void setY(Float y) {
 		this.y = y;
+	}
+	
+	public double getXTimesY(){
+		return this.x * this.y;
+	}
+	
+	public double getXSquared(){
+		return Math.pow(this.x, 2);
+	}
+	
+	public void integrationWithT(){
+		Degree degree = new Degree();
+		
+		this.integralValue = (float) degree.tdist(this.x, this.y);
 	}
 	
 

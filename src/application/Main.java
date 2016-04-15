@@ -32,9 +32,10 @@ public class Main extends Application {
 		try {
 			
 			Parent root = FXMLLoader.load(getClass().getResource("/view/mainView.fxml"));
-			Scene scene = new Scene(root,600,600);
+			Scene scene = new Scene(root,1200,600);
 			primaryStage.setScene(scene);
 			primaryStage.show();
+			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

@@ -25,12 +25,16 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 import model.ZScores;
 import util.Util;
 
@@ -59,6 +63,12 @@ public class MainViewController{
 	
 	@FXML
 	private Label varianceLabelID;
+	
+	@FXML
+	private Label regressionLabelID;
+	
+	@FXML
+	private LineChart<Number, Number> graphID;
 	
 	private TableView<ZScores> tableview;
 	
@@ -98,8 +108,19 @@ public class MainViewController{
 		this.fillStandardDeviation(Util.calculateStandardDeviation(simpleList));
 		this.fillVariance(Util.calculateVariance(simpleList));
 		this.fillCorrelation(Util.calculateCorrelation(list));
+		this.fillRegression(list);
+		this.constructGraph(list);
 		this.fillTableDouble(list);
 		
+		
+	}
+	
+	public void fillRegression(ArrayList<ZScores> list){
+		
+		
+		String beta0 = String.valueOf(Util.calculateBeta0(list));
+		String beta1 = String.valueOf(Util.calculateBeta1(list));
+		this.regressionLabelID.setText("Beta0: " + beta0.substring(0, 5) + " Beta1: " + beta1.substring(0, 5));
 		
 	}
 	
@@ -161,11 +182,11 @@ public class MainViewController{
 	
 	public void fillTableDouble(ArrayList<ZScores> list){
 		
-		TableColumn	<ZScores, Float> xColumn = new TableColumn<>("zScore");
+		TableColumn	<ZScores, Float> xColumn = new TableColumn<>("X");
 		xColumn.setMinWidth(100);
 		xColumn.setCellValueFactory(new PropertyValueFactory<>("x"));
 		
-		TableColumn	<ZScores, Float> yColumn = new TableColumn<>("y");
+		TableColumn	<ZScores, Float> yColumn = new TableColumn<>("dof");
 		yColumn.setMinWidth(100);
 		yColumn.setCellValueFactory(new PropertyValueFactory<>("y"));
 		
@@ -195,6 +216,33 @@ public class MainViewController{
 		this.tableview.setItems(listValues);
 		this.tableHBox.getChildren().addAll(this.tableview);
 		
+	}
+	
+	
+	public void constructGraph(ArrayList<ZScores> list){
+		
+		XYChart.Series<Number,Number> series1 = new XYChart.Series<>();
+		XYChart.Series<Number,Number> series2 = new XYChart.Series<>();
+        
+        double beta0 = Util.calculateBeta0(list);
+        double beta1 = Util.calculateBeta1(list);
+        
+        this.graphID.getStylesheets().add("application/application.css");
+        
+        
+
+        for (int i = 0; i < 2000; i = i+100) {
+            series1.getData().add(new XYChart.Data<>(/*String.valueOf(i)*/i, (beta0 + beta1*i)));
+        }
+        
+        for (ZScores element : list) {
+        	series2.getData().add(new XYChart.Data<>(element.getX(), element.getY()));
+		}
+        
+        this.graphID.getData().add(series2);
+        this.graphID.getData().add(series1); 
+        
+        
 	}
 	
 

@@ -121,5 +121,44 @@ public class Util {
 		
 		return numerator/denominator;
 	}
+	
+	public static double calculateBeta1(ArrayList<ZScores> list){
+		
+		double sumXandY = 0, sumXSquared = 0, sumX = 0, sumY = 0;
+		
+		for (ZScores x : list) {
+			
+			sumXandY += x.getXTimesY();
+			sumXSquared += x.getXSquared();
+			sumX += x.getX();
+			sumY += x.getY();
+			
+		}
+		
+		double xAvg = sumX/list.size();
+		double yAvg = sumY/list.size();
+		
+		double numerator = sumXandY - list.size()*xAvg*yAvg;
+		double denominator = sumXSquared - list.size()*Math.pow(xAvg, 2);
+		
+		return numerator/denominator;
+		
+	}
+	
+	public static double calculateBeta0(ArrayList<ZScores> list){
+		
+		double sumX = 0, sumY = 0;
+		
+		for (ZScores x : list) {
+			
+			sumY += x.getY();
+			sumX += x.getX();
+		}
+		
+		return sumY/list.size() - calculateBeta1(list)*(sumX/list.size());
+		
+	}
+	
+	
 
 }
