@@ -62,6 +62,9 @@ public class MainViewController{
 	private TextField filePathDoubleID;
 	
 	@FXML
+	private TextField tDistributionPath;
+	
+	@FXML
 	private Label varianceLabelID;
 	
 	@FXML
@@ -69,6 +72,7 @@ public class MainViewController{
 	
 	@FXML
 	private LineChart<Number, Number> graphID;
+	
 	
 	private TableView<ZScores> tableview;
 	
@@ -243,6 +247,36 @@ public class MainViewController{
         this.graphID.getData().add(series1); 
         
         
+	}
+	
+	public void tDistributionCalc(ActionEvent event) throws FileNotFoundException{
+		
+		File input = new File(tDistributionPath.getText());
+		ArrayList<ZScores> list = Util.readValuesFromFileDouble(input);
+		
+		ArrayList<Double> simpleList = new ArrayList<>();
+		
+		for (ZScores row : list) {
+			simpleList.add(row.getX().doubleValue());
+		}
+		
+		for (ZScores row : list) {
+			if(row.getX() > .5){
+				row.setIntegral(-1);
+			}else{
+				row.integrationWithT();
+			}
+			
+		}
+		
+		this.fillMean(Util.calculateMean(simpleList));
+		this.fillStandardDeviation(Util.calculateStandardDeviation(simpleList));
+		this.fillVariance(Util.calculateVariance(simpleList));
+		this.fillCorrelation(Util.calculateCorrelation(list));
+		this.fillRegression(list);
+		//this.constructGraph(list);
+		this.fillTableDouble(list);
+		
 	}
 	
 

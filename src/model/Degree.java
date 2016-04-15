@@ -13,7 +13,7 @@ public class Degree {
     //integrate from zero to x
     private double integrateT (double dof, double x){
         int n = 4;
-        double threshold = 0.00001;
+        double threshold = 0.001;
         double newEstimate = 0;
         double oldEstimate;
         double deltaX;

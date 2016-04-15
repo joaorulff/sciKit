@@ -31,8 +31,8 @@ public class ZScores {
 		
 		this.x = zScore;
 		this.setY(y);
-		//this.calculateIntegral();
-		this.integrationWithT();
+		this.calculateIntegral();
+		//this.integrationWithT();
 		
 	}
 	
@@ -40,8 +40,8 @@ public class ZScores {
 		
 		this.x = zScore;
 		this.setY(0.0f);
-		//this.calculateIntegral();
-		this.integrationWithT();
+		this.calculateIntegral();
+		//this.integrationWithT();
 		
 	}
 	
@@ -134,6 +134,10 @@ public class ZScores {
 		Degree degree = new Degree();
 		
 		this.integralValue = (float) degree.tdist(this.x, this.y);
+	}
+	
+	public void setIntegral(float x){
+		this.integralValue = x;
 	}
 	
 
