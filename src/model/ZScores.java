@@ -133,7 +133,7 @@ public class ZScores {
 	public void integrationWithT(){
 		Degree degree = new Degree();
 		
-		this.integralValue = (float) degree.tdist(this.x, this.y);
+		this.integralValue = (float) degree.tDistribution(this.x, this.y);
 	}
 	
 	public void setIntegral(float x){
