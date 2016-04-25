@@ -35,6 +35,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import model.Degree;
+import model.NormalSegment;
 import model.ZScores;
 import util.Util;
 
@@ -73,8 +75,19 @@ public class MainViewController{
 	@FXML
 	private LineChart<Number, Number> graphID;
 	
+	@FXML
+	private Label qLabelID;
 	
-	private TableView<ZScores> tableview;
+	@FXML
+	private Label pLabelID;
+	
+	@FXML
+	private Label respLabelID;
+	
+	
+	private TableView<NormalSegment> tableview;
+	
+	private TableView<ZScores> tableviewDouble;
 	
 
 	
@@ -85,11 +98,54 @@ public class MainViewController{
 		
 		File input = new File(filePathID.getText());
 		ArrayList<Double> list = Util.readValuesFromFile(input);
+		list = Util.toZScores(list);
+		
+		
+		
+		
+		int numberOfSegments = Util.segments(list.size());
+		ArrayList<NormalSegment> segments = Util.segmentsLength(numberOfSegments);
+		
+		for (double zScore : list) {
+			for (NormalSegment normalSegment : segments) {
+				if(normalSegment.isInside(zScore)){
+					normalSegment.incrementCounter();
+				}
+			}
+		}
+		
+		
+		
+		double q = 0;
+		for (NormalSegment normalSegment : segments) {
+			q += normalSegment.calculateQvalue(list.size()/numberOfSegments);
+		}
+		
+		
+		double chitest = 1.0 - (1.0/(double)numberOfSegments*0.001);
+		float probability = 1.0f - (float)chitest;
+		
+		String resp = null;
+		if(probability > 0.002){
+			resp = "Likely Normal Distribution";
+		}else{
+			resp = "Not Likely Normal Distribution";
+		}
+		/*
+		System.out.println(q);
+		System.out.println("CHITEST: " + chitest);
+		System.out.println(probability);
+		System.out.println(resp);
+		*/
 		
 		fillMean(Util.calculateMean(list));
 		fillStandardDeviation(Util.calculateStandardDeviation(list));
 		fillVariance(Util.calculateVariance(list));
-		fillTable(list);
+		fillQ(q);
+		fillP(probability);
+		fillAnswer(resp);
+		fillTable(segments);
+		
 		
 		
 	}
@@ -151,29 +207,52 @@ public class MainViewController{
 		this.correlationLabelID.setText(Double.toString(correlation));
 	}
 	
-	public void fillTable(ArrayList<Double> list){
+	public void fillQ(double q){
+		this.qLabelID.setText(q+"");
+	}
+	
+	public void fillP(double p){
+		this.pLabelID.setText(p+"");
+	}
+	
+	public void fillAnswer(String r){
+		this.respLabelID.setText(r);
+	}
+	
+	public void fillTable(ArrayList<NormalSegment> list){
 		
-		TableColumn	<ZScores, Float> xColumn = new TableColumn<>("zScore");
-		xColumn.setMinWidth(100);
-		xColumn.setCellValueFactory(new PropertyValueFactory<>("x"));
+		TableColumn	<NormalSegment, Double> lowerBound = new TableColumn<>("Lower Bound");
+		lowerBound.setMinWidth(100);
+		lowerBound.setCellValueFactory(new PropertyValueFactory<>("lowerBound"));
 		
 		
-		TableColumn<ZScores, Float> integralColumn = new TableColumn<>("integralValue");
-		integralColumn.setMinWidth(100);
-		integralColumn.setCellValueFactory(new PropertyValueFactory<>("integralValue"));
+		TableColumn<NormalSegment, Double> upperBound = new TableColumn<>("Upper Bound");
+		upperBound.setMinWidth(100);
+		upperBound.setCellValueFactory(new PropertyValueFactory<>("upperBound"));
+		
+		TableColumn<NormalSegment, Integer> counter = new TableColumn<>("Actual Data Items");
+		counter.setMinWidth(100);
+		counter.setCellValueFactory(new PropertyValueFactory<>("counter"));
+
+		
+		
 		
 		
 		this.tableview = new TableView<>();
 		
 		
-		this.tableview.getColumns().add(xColumn);
-		this.tableview.getColumns().add(integralColumn);
+		this.tableview.getColumns().add(lowerBound);
+		this.tableview.getColumns().add(upperBound);
+		this.tableview.getColumns().add(counter);
+
 		
-		ObservableList<ZScores> listValues = FXCollections.observableArrayList();
+		ObservableList<NormalSegment> listValues = FXCollections.observableArrayList();
 		
-		for (Double x : list) {
+		for (NormalSegment x : list) {
 			
-			ZScores temp = new ZScores(x.floatValue());
+			NormalSegment temp = new NormalSegment(x.getLowerBound(), x.getUpperBound());
+			temp.setCounter(x.getCounter());
+			temp.setqValue(x.getqValueCol());
 			listValues.add(temp);
 			
 		}
@@ -200,12 +279,12 @@ public class MainViewController{
 		integralColumn.setCellValueFactory(new PropertyValueFactory<>("integralValue"));
 		
 		
-		this.tableview = new TableView<>();
+		this.tableviewDouble = new TableView<>();
 		
 		
-		this.tableview.getColumns().add(xColumn);
-		this.tableview.getColumns().add(yColumn);
-		this.tableview.getColumns().add(integralColumn);
+		this.tableviewDouble.getColumns().add(xColumn);
+		this.tableviewDouble.getColumns().add(yColumn);
+		this.tableviewDouble.getColumns().add(integralColumn);
 		
 		ObservableList<ZScores> listValues = FXCollections.observableArrayList();
 		
@@ -217,8 +296,8 @@ public class MainViewController{
 		}
 		
 		
-		this.tableview.setItems(listValues);
-		this.tableHBox.getChildren().addAll(this.tableview);
+		this.tableviewDouble.setItems(listValues);
+		this.tableHBox.getChildren().addAll(this.tableviewDouble);
 		
 	}
 	

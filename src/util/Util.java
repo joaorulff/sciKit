@@ -21,10 +21,28 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import model.NormalSegment;
 import model.ZScores;
 
 public class Util {
 	
+	
+	public static ArrayList<Double> toZScores(ArrayList<Double> list){
+		
+		double mean = calculateMean(list);
+		double stdDev = calculateStandardDeviation(list);
+		
+		ArrayList<Double> newList = new ArrayList<>();
+		
+		for (Double element : list) {
+			newList.add((element - mean)/stdDev);
+		}
+		
+		for (Double x : newList) {
+			System.out.println(x);
+		}
+		return newList; 
+	}
 	
 	public static ArrayList<Double> readValuesFromFile(File file) throws FileNotFoundException{
 		
@@ -96,6 +114,7 @@ public class Util {
 		
 		double mean = calculateMean(list);
 		double acumulator = 0;
+		
 		for (Double number : list) {
 			acumulator += Math.pow((number-mean), 2);
 		}
@@ -159,6 +178,93 @@ public class Util {
 		
 	}
 	
+	public static int segments(int fileLength){
+		int maxCount = 0;
+		int segements = 0;
+		double difference = 99;
+		
+		
+		for(int s = 3; s <= fileLength; s++){
+			int count = 0;
+			float intTest = ((fileLength/(float)s));
+			if ((intTest == Math.floor(intTest)) && !Double.isInfinite(intTest)) {
+				count++;
+			}
+				
+			if (fileLength/s >= 5){
+				count++;
+			}
+			
+			if(s*s >= fileLength){
+				count++;
+			}
+			
+			if(s*s == fileLength){
+				count++;
+			}
+			
+			if(count >= maxCount){
+				double temp = Math.abs((fileLength - (s * s)));
+				if(temp - fileLength  <= difference && temp >= 0){
+					difference = temp;
+					maxCount = count;
+					segements = s;
+				}
+			}
+		
+		}
+		
+		return segements;
+		
+		}
+	
+		public static ArrayList<NormalSegment> segmentsLength(int numberOfsegments){
+		
+		double percentile = 1.0/(double)numberOfsegments;
+		ArrayList<Double> upperBounds = new ArrayList<>();
+		ZScores helper = new ZScores(0);
+		
+		for (double i = -3; i < 0; i = i + .001) {
+			
+			double temp = helper.calculateIntegral(i);
+			//Thread.sleep(100);
+			//System.out.println("CURRENT I: " + i);
+			//System.out.println("CURRENT PERCENTILE: " + percentile);
+			//System.out.println("INTEGRAL:  "+ calculateIntegral(i));
+			
+			if (Math.abs(temp - percentile) < 0.001){
+				
+				percentile += 1.0/(double)numberOfsegments;
+				upperBounds.add(i);
+			}
+			
+		}
+		
+		for (int i = upperBounds.size()-2; i >= 0; i--) {
+			upperBounds.add(upperBounds.get(i)*(-1));
+		}
+		
+		
+		ArrayList<NormalSegment> normalSegments = new ArrayList<>();
+		for (int i = 0; i < upperBounds.size(); i++) {
+			
+			if(i == 0){
+				NormalSegment temp = new NormalSegment(-1000, upperBounds.get(i));
+				normalSegments.add(temp);
+			}else if(i != upperBounds.size()-1){
+				NormalSegment temp = new NormalSegment(upperBounds.get(i-1), upperBounds.get(i));
+				normalSegments.add(temp);
+			}
+			else{
+				NormalSegment temp = new NormalSegment(upperBounds.get(i-1), upperBounds.get(i));
+				normalSegments.add(temp);
+				NormalSegment temp1 = new NormalSegment(upperBounds.get(i), 1000);
+				normalSegments.add(temp1);
+			}
+			
+		}
+		return normalSegments;
+	}
 	
 
 }

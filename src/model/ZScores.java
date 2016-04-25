@@ -16,7 +16,7 @@
 
 package model;
 
-
+import java.util.ArrayList;
 
 public class ZScores {
 	
@@ -83,6 +83,24 @@ public class ZScores {
 		
 		this.integralValue = (float)(0.5 + area);
 	}
+	
+	
+	public double calculateIntegral(double x){
+		
+		double area = 0;
+		int n = 40;
+		
+		double deltaX = x/n;
+		
+		for (int k = 1; k <= n; k++) {
+			
+			area += f( (2*k-1)*deltaX/2) * deltaX;
+			
+		}
+		
+		
+		return 0.5 + area;
+	}
 
 
 	
@@ -94,8 +112,6 @@ public class ZScores {
 		
 		
 		return constant*Math.pow(Math.E, exponent);
-		
-		
 
 	}
 	
@@ -140,5 +156,12 @@ public class ZScores {
 		this.integralValue = x;
 	}
 	
-
+	
+	
+	public float test(){
+		return (float) calculateIntegral(-.842);
+	}
+	
+	
+	
 }
