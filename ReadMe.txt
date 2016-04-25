@@ -1,6 +1,6 @@
-﻿* The user should run the SciKit.jar file and write on one of the text fields the path of the file he wants to use as input. After inputting a file path just hit calculate button to see the results. The output is based on which text field the user inputs the file path into. See below:
+* The user should run the SciKit.jar file and write on one of the text fields the path of the file he wants to use as input. After inputting a file path just hit calculate button to see the results. The output is based on which text field the user inputs the file path into. See below:
    * First text field: The user must use the first text field if he wants to calculate the T distribution values of the values on the file.
    * Second text field: The user must use the second text field if he wants to calculate the Mean, Standard Deviation, Correlation, Variance, Regression Coefficients and see the regression line with the scatter points for the file he entered. 
-   * Third text field: The user must use the third text field if he wants to calculate the Mean, Standard Deviation, Correlation and Variance.
+   * Third text field: The user must use the third text field if he wants to calculate the Mean, Standard Deviation, Correlation, Variance and to check if the dataset is likely a normal distribution. Use this one to test the program 7!
 * If the user wants to compile the source code, he needs to download and install the e(fx)clipse on a eclipse IDE. The second step is to go to export > Java > Runnable JAR file and hit finish. However it's recommended to run the .Jar file attached on the project.
 * We made this project using Eclipse IDE, JavaFX and Scene Builder.
